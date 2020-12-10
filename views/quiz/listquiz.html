@@ -1,0 +1,336 @@
+{{define "user_list_quiz"}}
+<!DOCTYPE html>
+<html lang="en">
+{{template "_head"}}
+
+<body class="hold-transition layout-top-nav">
+    <div class="wrapper">
+        {{template "user_navigation"}}
+
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1 class="m-0 text-dark">List Quiz</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="container">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">my quiz ist</h3>
+                        </div>
+                        
+                        <table id="table1" class="table  table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Quiz Title</th>
+                                    <th>Is Private</th>
+                                    <th>Publish Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {{range .}}
+                                <tr>
+                                    <td></td>
+                                    <td>{{.QuizName}}</td>
+                                    <td>
+                                        {{if .IsPrivate}}
+                                        Private
+                                        {{else}}
+                                        Public
+                                        {{end}}
+                                    </td>
+                                    <td>
+                                        {{if .IsPublished}}
+                                        Published
+                                        {{else}}
+                                        Not Published
+                                        {{end}}
+                                    </td>
+
+                                    <td>
+                                        <center>
+                                            <button type="button" class="btn btn-success" data-toggle="modal"
+                                                data-target="#edit-modal" item-id="{{.ID}}" name="edit-button">
+                                                Edit
+                                            </button>
+
+                                            <a href="/user/create-question?id={{.ID}}" class="btn btn-success">
+                                                Make Question
+                                            </a>
+
+                                            {{if .IsPrivate}}
+                                            <button type="button" class="btn btn-warning" data-toggle="modal"
+                                                data-target="#change-password-modal" item-id="{{.ID}}"
+                                                name="change-password-button">
+                                                Change Key
+                                            </button>
+                                            {{end}}
+
+                                            <button class="btn btn-danger" data-toggle="modal"
+                                                data-target="#delete-modal" item-id="{{.ID}}" name="delete-button">
+                                                Delete
+                                            </button>
+                                        </center>
+                                    </td>
+                                </tr>
+                                {{end}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT name and publicity -->
+    <div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Quiz</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form role="form" id="edit_quiz_form" action="/user/update-quiz" method="POST">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="quizname">Quiz Name</label>
+                            <input type="text" class="form-control" id="quizname" placeholder="enter quiz name">
+                        </div>
+
+                        <div class="form-check">
+                            <input type="checkbox" name="is_private" class="form-check-input" id="is_private">
+                            <label class="form-check-label" for="is_private">Make this quiz private</label>
+                        </div>
+
+                        <div id="csrfHolder1"></div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change quiz password/private key -->
+    <div class="modal fade" id="change-password-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Change Private Key</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form role="form" id="key_quiz_form" action="/user/change-quiz-key" method="POST">
+                    <div class="modal-body">
+                        <div class="form-group" id="desc"></div>
+
+                        <div class="form-group" id="private_key_FG">
+                            <label for="private_key">New quiz key</label>
+                            <input type="password" class="form-control" id="private_key"
+                                placeholder="Enter quiz access key">
+                        </div>
+
+                        <div class="form-group" id="conf_private_key_FG">
+                            <label for="conf_private_key">Confirm new quiz key</label>
+                            <input type="password" class="form-control" id="conf_private_key"
+                                placeholder="Re-enter quiz access key">
+                        </div>
+
+                        <div id="csrfHolder2"></div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation modal -->
+    <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete quiz</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form role="form" id="delete-form" action="/user/change-quiz-key" method="POST">
+                    <div class="modal-body">
+                        <div class="form-group" id="desc2">
+                            Do your really wana delete this quiz forever?
+                        </div>
+                        <div id="csrfHolder3"></div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{template "_script"}}
+    <script>
+        $(function () {
+            $('#table1').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            })
+        })
+
+        //invoke modal
+        $("button[name='edit-button']").click(function (e) {
+            var button = $(this)
+            var itemID = button.attr("item-id")
+
+            $.ajax({
+                url: `/user/edit-quiz?id=${itemID}`,
+                method: "GET",
+            }).then(res => {
+                const data = res.data.Data
+                const csrf = res.data.CSRF
+                $("#quizname").val(data.QuizName)
+                $("#edit_quiz_form").attr("action", `/user/update-quiz?id=${itemID}`)
+                if (data.IsPrivate) {
+                    $("#is_private").prop("checked", true)
+                } else {
+                    $("#is_private").prop("checked", false)
+                }
+                //append CSRF hidden input
+                document.getElementById("csrfHolder1").innerHTML = csrf.csrfField
+            })
+        })
+
+        $("button[name='change-password-button']").click(function (e) {
+            var button = $(this)
+            var itemID = button.attr("item-id")
+
+            $.ajax({
+                url: `/user/edit-quiz?id=${itemID}`,
+                method: "GET",
+            }).then(res => {
+                const data = res.data.Data
+                const csrf = res.data.CSRF
+                document.getElementById("desc").innerHTML = `Change key on <b>${data.QuizName}</b>`
+                $("#key_quiz_form").attr("action", `/user/change-quiz-key?id=${itemID}`)
+
+                //append CSRF hidden input
+                document.getElementById("csrfHolder2").innerHTML = csrf.csrfField
+            })
+        })
+
+        $("button[name='delete-button']").click(function (e) {
+            var button = $(this)
+            var itemID = button.attr("item-id")
+            $("#delete-form").attr("action", `/user/delete-quiz?id=${itemID}`)
+
+            $.ajax({
+                url: `/user/edit-quiz?id=${itemID}`,
+                method: "GET",
+            }).then(res => {
+                const csrf = res.data.CSRF
+                document.getElementById("csrfHolder3").innerHTML = csrf.csrfField
+            })
+        })
+
+        //submiting
+        $("#edit_quiz_form").submit(function (e) {
+            e.preventDefault()
+            const form = $(this)
+            const url = form.attr("action")
+            const method = form.attr("method")
+            const data = JSON.stringify({
+                name: $("#quizname").val(),
+                isPrivate: $("#is_private")[0].checked,
+            })
+
+            $.ajax({
+                url,
+                method,
+                data,
+                beforeSend: function (r) {
+                    const csrf = form.find("input[name='gorilla.csrf.Token']").val()
+                    r.setRequestHeader("X-CSRF-Token", csrf)
+                }
+            }).then(res => {
+                $("#edit-modal").modal("hide")
+                window.location.reload()
+            })
+        })
+
+        $("#key_quiz_form").submit(function (e) {
+            e.preventDefault()
+            const form = $(this)
+            const url = form.attr("action")
+            const method = form.attr("method")
+            const data = JSON.stringify({
+                PrivateKey: $("#private_key").val()
+            })
+
+            $.ajax({
+                url,
+                method,
+                data,
+                beforeSend: function (r) {
+                    const token = form.find("input[name='gorilla.csrf.Token']").val()
+                    r.setRequestHeader("X-CSRF-Token", token)
+                }
+            }).then(res => {
+                $("#change-password-modal").modal("hide")
+                window.location.reload()
+            })
+        })
+
+        $("#delete-form").submit(function (e) {
+            e.preventDefault()
+            const form = $(this)
+            const url = form.attr("action")
+            const method = form.attr("method")
+
+            $.ajax({
+                url,
+                method,
+                beforeSend: function (r) {
+                    const csrf = form.find("input[name='gorilla.csrf.Token']").val()
+                    r.setRequestHeader("X-CSRF-Token", csrf)
+                }
+            }).then(res => {
+                if (res.success) window.location.reload()
+            })
+        })
+    </script>
+</body>
+
+</html>
+{{end}}

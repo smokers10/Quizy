@@ -1,0 +1,59 @@
+{{define "question"}}
+<!DOCTYPE html>
+<html lang="en">
+{{template "_head"}}
+
+<body class="hold-transition layout-top-nav">
+    <div class="wrapper">
+        {{template "user_navigation"}}
+
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1 class="m-0 text-dark">
+                                {{.QuizName}}
+                            </h1>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="d-flex justify-content-end">
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#add-modal"
+                                    name="add-button">
+                                    Add Question
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="container">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Question</h5>
+
+                            <p class="card-text">
+                                Some quick example text to build on the card title and make up the bulk of the
+                                card's
+                                content.
+                            </p>
+
+                            <a href="#" class="card-link">edit question</a>
+                            <a href="#" class="card-link">delete question</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    {{template "_script"}}
+</body>
+
+</html>
+{{end}}

@@ -1,0 +1,100 @@
+{{define "user_make_quiz"}}
+<!DOCTYPE html>
+<html lang="en">
+{{template "_head"}}
+
+<body class="hold-transition layout-top-nav">
+    <div class="wrapper">
+        {{template "user_navigation"}}
+
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1 class="m-0 text-dark">Make New Quiz</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="container">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Make a new quiz</h3>
+                        </div>
+
+                        <form role="form" id="make_quiz_form" action="/user/create-quiz" method="POST">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="quizname">Quiz Name</label>
+                                    <input type="text" class="form-control" id="quizname" placeholder="enter quiz name">
+                                </div>
+
+                                <div class="form-group" id="private_key_FG">
+                                    <label for="private_key">Quiz key</label>
+                                    <input type="password" class="form-control" id="private_key"
+                                        placeholder="Enter quiz access key">
+                                </div>
+
+                                <div class="form-check">
+                                    <input type="checkbox" name="is_private" class="form-check-input" id="is_private">
+                                    <label class="form-check-label" for="is_private">Make this quiz private</label>
+                                </div>
+
+                                {{.csrfField}}
+                            </div>
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{template "_script"}}
+    <script>
+        $("#private_key_FG").hide()
+
+        $("#is_private").click(function (e) {
+            var isPrivate = $("#is_private")[0].checked
+            if (isPrivate) {
+                $("#private_key_FG").show()
+            } else {
+                $("#private_key_FG").hide()
+                $("#private_key").val("")
+            }
+        })
+
+        $("#make_quiz_form").submit(function (e) {
+            e.preventDefault()
+            var form = $(this)
+            var action = form.attr("action")
+            var method = form.attr("method")
+
+            var payload = JSON.stringify({
+                name: $("#quizname").val(),
+                isPrivate: $("#is_private")[0].checked,
+                privateKey: $("#private_key").val()
+            })
+
+            $.ajax({
+                url: action,
+                method: method,
+                data: payload,
+                contentType: "application/json",
+                beforeSend: function (r) {
+                    const csrf = form.find("input[name='gorilla.csrf.Token']").val()
+                    r.setRequestHeader("X-CSRF-Token", csrf)
+                }
+            }).then(res => console.log(res))
+        })
+    </script>
+</body>
+
+</html>
+{{end}}

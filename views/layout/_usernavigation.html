@@ -1,0 +1,55 @@
+{{define "user_navigation"}}
+<nav class="main-header navbar navbar-expand-md navbar-light navbar-white">
+    <div class="container">
+        <a href="/user/home" class="navbar-brand">
+            <span class="brand-text font-weight-light">Quizy</span>
+        </a>
+
+        <button class="navbar-toggler order-1" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse order-3" id="navbarCollapse">
+            <!-- Left navbar links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a href="/user/home" class="nav-link">Home</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/user/create-quiz" class="nav-link">Create Quiz</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/user/my-quiz" class="nav-link">My Quiz</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Right navbar links -->
+        <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+            <!-- Dropdown Menu -->
+            <li class="nav-item dropdown">
+                <a class="nav-link" data-toggle="dropdown" href="#">
+                    <i class="far fa-user"></i>
+                </a>
+
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-envelope mr-2"></i>Profile
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-users mr-2"></i>Setting
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="/logout" class="dropdown-item">
+                        <i class="fas fa-file mr-2"></i>Logout
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+{{end}}
