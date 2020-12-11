@@ -8,33 +8,28 @@ import (
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	gorm := database.Connect()
-	db, _ := gorm.DB()
-	defer db.Close()
-
+	db := libs.GORM()
+	body := libs.RDecoder(r)
 	var user models.User
+	db.Where("email = ?", body["email"].(string)).First(&user)
 
-	email := r.FormValue("email")
-	password := r.FormValue("password")
-
-	gorm.Where("email", email).First(&user)
 	if user.ID == 0 {
-		http.Redirect(w, r, "/login", 302)
+		libs.JSON(w, "User not registered", nil, false)
+		return
 	}
-
-	isMatch := libs.Compare(user.Password, password)
-	if !isMatch {
-		http.Redirect(w, r, "/login", 302)
+	if isMatch := libs.Compare(user.Password, body["password"].(string)); !isMatch {
+		libs.JSON(w, "Wrong password entry", nil, false)
+		return
 	}
 
 	session, _ := libs.Store.Get(r, "auth")
 	session.Values["userID"] = user.ID
 	session.Values["email"] = user.Email
-	if e := session.Save(r, w); e != nil {
-		panic(e)
+	if err := session.Save(r, w); err != nil {
+		panic(err)
 	}
 
-	http.Redirect(w, r, "/user/home", 302)
+	libs.JSON(w, "Login success", nil, true)
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {

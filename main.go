@@ -11,7 +11,7 @@ import (
 
 func main() {
 	// Migrate()
-	//setup server
+	// setup server
 	server := &http.Server{
 		Addr:         ":8081",
 		Handler:      routes.Router(),

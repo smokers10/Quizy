@@ -14,7 +14,7 @@
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Sign in to start your session</p>
 
-                <form action="/login" method="POST">
+                <form action="/login" method="POST" id="login-form">
                     <div class="input-group mb-3">
                         <input type="email" name="email" class="form-control" placeholder="Email">
                         <div class="input-group-append">
@@ -23,6 +23,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="input-group mb-3">
                         <input type="password" name="password" class="form-control" placeholder="Password">
                         <div class="input-group-append">
@@ -31,6 +32,13 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <div class="text-message">
+
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-8">
                             <div class="icheck-primary">
@@ -62,6 +70,36 @@
     </div>
     <!-- /.login-box -->
     {{template "_script"}}
+    <script>
+        $("#login-form").submit(function (e) {
+            e.preventDefault()
+            const form = $(this)
+            const url = form.attr("action")
+            const method = form.attr("method")
+            const data = JSON.stringify({
+                email: $("input[name='email']").val(),
+                password: $("input[name='password']").val()
+            })
+
+            $.ajax({
+                url,
+                method,
+                data,
+                beforeSend: function (r) {
+                    const csrf = form.find("input[name='gorilla.csrf.Token']").val()
+                    r.setRequestHeader("X-CSRF-Token", csrf)
+                }
+            }).then(res => {
+                const isSuccess = res.success
+                if (!isSuccess) {
+                    $(".text-message").text(res.message)
+                }
+                if (isSuccess){
+                    window.location.reload()
+                }
+            })
+        })
+    </script>
 </body>
 
 </html>

@@ -9,7 +9,7 @@ import (
 )
 
 type BodyQuiz struct {
-	Name       string
+	Title      string
 	IsPrivate  bool
 	PrivateKey string
 }
@@ -68,7 +68,7 @@ func CreateQuiz(w http.ResponseWriter, r *http.Request) {
 	}
 
 	quiz := models.Quiz{
-		QuizName:   body.Name,
+		Title:      body.Title,
 		UserID:     libs.GetAuth(r).ID,
 		IsPrivate:  body.IsPrivate,
 		PrivateKey: body.PrivateKey,
@@ -89,7 +89,7 @@ func UpdateQuiz(w http.ResponseWriter, r *http.Request) {
 	decoder.Decode(&body)
 
 	db.Model(quiz).Where("id = ?", quizID).Where("use_id = ?", libs.GetAuth(r).ID).Updates(models.Quiz{
-		QuizName:  body.Name,
+		Title:     body.Title,
 		IsPrivate: body.IsPrivate,
 	})
 

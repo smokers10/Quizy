@@ -93,3 +93,13 @@ func GORM() *gorm.DB {
 	gorm := database.Connect()
 	return gorm
 }
+
+//to decode body
+func RDecoder(r *http.Request) map[string]interface{} {
+	type EmptyInterface interface{}
+	var body EmptyInterface
+	decoder := json.NewDecoder(r.Body)
+	decoder.Decode(&body)
+
+	return body.(map[string]interface{})
+}

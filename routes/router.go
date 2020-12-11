@@ -3,6 +3,7 @@ package routes
 import (
 	"net/http"
 	"quizy/handlers"
+	"quizy/libs"
 
 	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
@@ -20,10 +21,13 @@ func Router() *mux.Router {
 	prefix := http.StripPrefix("/assets/", http.FileServer(file))
 	r.PathPrefix("/assets/").Handler(prefix)
 
-	//route list
 	r.HandleFunc("/", handlers.IndexPage).Methods("GET")
 	r.HandleFunc("/login", Guest(handlers.LoginPage)).Methods("GET")
 	r.HandleFunc("/register", Guest(handlers.RegisterPage)).Methods("GET")
+	r.HandleFunc("/generate-csrf", func(w http.ResponseWriter, r *http.Request) {
+		csrf := libs.CSRFToken(r)
+		libs.JSON(w, "this is your csrf", csrf, true)
+	})
 
 	//auth action
 	r.HandleFunc("/register", Guest(handlers.Register)).Methods("POST")
@@ -46,12 +50,12 @@ func Router() *mux.Router {
 
 	//Question render page
 	r.HandleFunc("/user/create-question", Private(handlers.CreateQuestionPage)).Methods("GET")
-	r.HandleFunc("/user/edit-question", Private(handlers.EditQuestion)).Methods("GET")
+	r.HandleFunc("/user/edit-question/{id}", Private(handlers.EditQuestion)).Methods("GET")
 
 	//Question Action
 	r.HandleFunc("/user/create-question", Private(handlers.CreateQuestion)).Methods("POST")
-	r.HandleFunc("/user/update-question", Private(handlers.UpdateQuestion)).Methods("POST")
-	r.HandleFunc("/user/delete-question", Private(handlers.DeleteQUestion)).Methods("POST")
+	r.HandleFunc("/user/update-question/{id}", Private(handlers.UpdateQuestion)).Methods("POST")
+	r.HandleFunc("/user/delete-question/{id}", Private(handlers.DeleteQUestion)).Methods("POST")
 
 	return r
 }

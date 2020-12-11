@@ -13,7 +13,7 @@
                     <div class="row mb-2">
                         <div class="col-sm-6">
                             <h1 class="m-0 text-dark">
-                                {{.QuizName}}
+                                {{.Quiz.Title}}
                             </h1>
                         </div>
 
@@ -31,28 +31,311 @@
 
             <div class="content">
                 <div class="container">
+
+                    {{range .Question}}
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Question</h5>
 
                             <p class="card-text">
-                                Some quick example text to build on the card title and make up the bulk of the
-                                card's
-                                content.
+                                {{.Question}}
                             </p>
 
-                            <a href="#" class="card-link">edit question</a>
-                            <a href="#" class="card-link">delete question</a>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    A. {{.OptionA}}
+                                </div>
+                                <div class="col-md-6">
+                                    C. {{.OptionC}}
+                                </div>
+                                <div class="col-md-6">
+                                    B. {{.OptionB}}
+                                </div>
+                                <div class="col-md-6">
+                                    D. {{.OptionD}}
+                                </div>
+                            </div>
+
+                            <p>
+                                Right Answer <b>{{.RightAnswer}}</b>.
+                            </p>
+                            <hr>
+                            <div class="d-flex justify-content-end">
+                                <button href="#" class="btn btn-success mr-3" name="edit-button" data-toggle="modal"
+                                    data-target="#edit-modal" question-id="{{.ID}}">Edit question</button>
+                                <button href="#" class="btn btn-danger" name="delete-button" data-toggle="modal"
+                                    data-target="#delete-modal" question-id="{{.ID}}">Delete question</button>
+                            </div>
                         </div>
                     </div>
+                    {{end}}
+
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal Zone -->
+    <div class="modal fade" id="add-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Make a question</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
 
+                <form role="form" id="add_question_form" action="/user/create-question?id={{.Quiz.ID}}" method="POST">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="op">Question</label>
+                            <textarea class="form-control" name="questioin" id="question" rows="3"
+                                placeholder="Enter question..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="op-a">Option A</label>
+                            <input type="text" class="form-control" name="option_a" id="op-a"
+                                placeholder="Enter answer for option A">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="op-b">Option B</label>
+                            <input type="text" class="form-control" name="option_b" id="op-b"
+                                placeholder="Enter answer for option B">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="op-c">Option C</label>
+                            <input type="text" class="form-control" name="option_c" id="op-c"
+                                placeholder="Enter answer for option C">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="op-d">Option D</label>
+                            <input type="text" class="form-control" name="option_d" id="op-d"
+                                placeholder="Enter answer for option D">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Right Answer</label>
+
+                            <select class="form-control" name="right_answer" id="right-answer">
+                                <option>Select a right anwer</option>
+                                <option value="A">Option A</option>
+                                <option value="B">Option B</option>
+                                <option value="C">Option C</option>
+                                <option value="D">Option D</option>
+                            </select>
+                        </div>
+
+                        {{.CSRF.csrfField}}
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Make a question</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form role="form" id="edit_question_form" action="/user/update-question/" method="POST">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="op">Question</label>
+                            <textarea class="form-control" name="questioin" id="edit-question" rows="3"
+                                placeholder="Enter question..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="op-a">Option A</label>
+                            <input type="text" class="form-control" name="option_a" id="edit-op-a"
+                                placeholder="Enter answer for option A">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="op-b">Option B</label>
+                            <input type="text" class="form-control" name="option_b" id="edit-op-b"
+                                placeholder="Enter answer for option B">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="op-c">Option C</label>
+                            <input type="text" class="form-control" name="option_c" id="edit-op-c"
+                                placeholder="Enter answer for option C">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="op-d">Option D</label>
+                            <input type="text" class="form-control" name="option_d" id="edit-op-d"
+                                placeholder="Enter answer for option D">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Right Answer</label>
+
+                            <select class="form-control" name="right_answer" id="edit-right-answer">
+                                <option>Select a right anwer</option>
+                                <option value="A">Option A</option>
+                                <option value="B">Option B</option>
+                                <option value="C">Option C</option>
+                                <option value="D">Option D</option>
+                            </select>
+                        </div>
+
+                        {{.CSRF.csrfField}}
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Make a question</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form role="form" id="delete_question_form" action="/user/create-question?id={{.Quiz.ID}}" method="POST">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            Do you really wanna delete this question?
+                        </div>
+                        {{.CSRF.csrfField}}
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Delete anyway</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- End Of Modal Zone -->
 
     {{template "_script"}}
+    <script>
+        //button
+        $("button[name='edit-button']").click(function(){
+            const button = $(this)
+            const ID = button.attr("question-id")
+            $("#edit_question_form").attr("action",`/user/update-question/${ID}`)
+            
+            $.ajax({
+                url:`/user/edit-question/${ID}`,
+                method:"GET",
+            }).then(res=>{
+                const data = res.data
+                $("#edit-question").val(data.Question)
+                $("#edit-op-a").val(data.OptionA)
+                $("#edit-op-b").val(data.OptionB)
+                $("#edit-op-c").val(data.OptionC)
+                $("#edit-op-d").val(data.OptionD)
+                $("#edit-right-answer").val(data.RightAnswer)
+            })
+        })
+
+        $("button[name='delete-button']").click(function(){
+            const button = $(this)
+            const ID = button.attr("question-id")
+            $("#delete_question_form").attr("action",`/user/delete-question/${ID}`)
+        })
+        //Action ajax/Submiting Form
+        $("#add_question_form").submit(function (e) {
+            e.preventDefault()
+            const form = $(this)
+            const url = form.attr("action")
+            const method = form.attr("method")
+            const data = JSON.stringify({
+                Question: $("#question").val(),
+                OptionA: $("#op-a").val(),
+                OptionB: $("#op-b").val(),
+                OptionC: $("#op-c").val(),
+                OptionD: $("#op-d").val(),
+                RightAnswer: $("#right-answer").val(),
+            })
+
+            $.ajax({
+                url,
+                method,
+                data,
+                beforeSend: function (r) {
+                    const csrf = form.find("input[name='gorilla.csrf.Token']").val()
+                    r.setRequestHeader("X-CSRF-Token", csrf)
+                }
+            }).then(res => {
+                console.log(res)
+            })
+        })
+        
+        $("#edit_question_form").submit(function(e){
+            e.preventDefault()
+            const form = $(this)
+            const url = form.attr("action")
+            const method = form.attr("method")
+            const data = JSON.stringify({
+                Question: $("#edit-question").val(),
+                OptionA: $("#edit-op-a").val(),
+                OptionB: $("#edit-op-b").val(),
+                OptionC: $("#edit-op-c").val(),
+                OptionD: $("#edit-op-d").val(),
+                RightAnswer: $("#edit-right-answer").val(),
+            })
+            
+            $.ajax({
+                url,
+                method,
+                data,
+                beforeSend: function (r) {
+                    const csrf = form.find("input[name='gorilla.csrf.Token']").val()
+                    r.setRequestHeader("X-CSRF-Token", csrf)
+                }
+            }).then(res => {
+                console.log(res)
+            })
+        })
+    
+        $("#delete_question_form").submit(function(e){
+            e.preventDefault()
+            const form = $(this)
+            const url = form.attr("action")
+            const method = form.attr("method")
+
+            $.ajax({
+                url,
+                method,
+                beforeSend: function (r) {
+                    const csrf = form.find("input[name='gorilla.csrf.Token']").val()
+                    r.setRequestHeader("X-CSRF-Token", csrf)
+                }
+            }).then(res => {
+                console.log(res)
+            })
+        })
+    </script>
 </body>
 
 </html>

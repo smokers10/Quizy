@@ -10,5 +10,6 @@ type Answer struct {
 	User       User
 	QuestionID uint
 	Question   Question
-	Answer     string
+	Answer     string `gorm:"type:varchar(1)"`
+	IsRight    bool
 }
