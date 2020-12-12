@@ -40,13 +40,13 @@ func Router() *mux.Router {
 	//quiz render page
 	r.HandleFunc("/user/my-quiz", Private(handlers.GetAllQuiz)).Methods("GET")
 	r.HandleFunc("/user/create-quiz", Private(handlers.CreateQuizPage)).Methods("GET")
-	r.HandleFunc("/user/edit-quiz", Private(handlers.EditQuiz)).Methods("GET")
+	r.HandleFunc("/user/edit-quiz/{id}", Private(handlers.EditQuiz)).Methods("GET")
 
 	//quiz user action
 	r.HandleFunc("/user/create-quiz", Private(handlers.CreateQuiz)).Methods("POST")
-	r.HandleFunc("/user/update-quiz", Private(handlers.UpdateQuiz)).Methods("POST")
-	r.HandleFunc("/user/delete-quiz", Private(handlers.DeleteQuiz)).Methods("POST")
-	r.HandleFunc("/user/change-quiz-key", Private(handlers.ChangeKey)).Methods("POST")
+	r.HandleFunc("/user/update-quiz/{id}", Private(handlers.UpdateQuiz)).Methods("POST")
+	r.HandleFunc("/user/delete-quiz/{id}", Private(handlers.DeleteQuiz)).Methods("POST")
+	r.HandleFunc("/user/change-quiz-key/{id}", Private(handlers.ChangeKey)).Methods("POST")
 
 	//Question render page
 	r.HandleFunc("/user/create-question", Private(handlers.CreateQuestionPage)).Methods("GET")

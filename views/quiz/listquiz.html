@@ -106,11 +106,11 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="quizname">Quiz Name</label>
-                            <input type="text" class="form-control" id="quizname" placeholder="enter quiz name">
+                            <input type="text" class="form-control" id="edit-quizname" placeholder="enter quiz name">
                         </div>
 
                         <div class="form-check">
-                            <input type="checkbox" name="is_private" class="form-check-input" id="is_private">
+                            <input type="checkbox" name="is_private" class="form-check-input" id="edit-is_private">
                             <label class="form-check-label" for="is_private">Make this quiz private</label>
                         </div>
 
@@ -144,7 +144,7 @@
 
                         <div class="form-group" id="private_key_FG">
                             <label for="private_key">New quiz key</label>
-                            <input type="password" class="form-control" id="private_key"
+                            <input type="password" class="form-control" id="ch_private_key"
                                 placeholder="Enter quiz access key">
                         </div>
 
@@ -209,54 +209,56 @@
             })
         })
 
-        //invoke modal
+        //invoke editing quiz modal
         $("button[name='edit-button']").click(function (e) {
             var button = $(this)
             var itemID = button.attr("item-id")
 
             $.ajax({
-                url: `/user/edit-quiz?id=${itemID}`,
+                url: `/user/edit-quiz/${itemID}`,
                 method: "GET",
             }).then(res => {
                 const data = res.data.Data
                 const csrf = res.data.CSRF
-                $("#quizname").val(data.QuizName)
-                $("#edit_quiz_form").attr("action", `/user/update-quiz?id=${itemID}`)
+                $("#edit-quizname").val(data.Title)
+                $("#edit_quiz_form").attr("action", `/user/update-quiz/${itemID}`)
                 if (data.IsPrivate) {
-                    $("#is_private").prop("checked", true)
+                    $("#edit-is_private").prop("checked", true)
                 } else {
-                    $("#is_private").prop("checked", false)
+                    $("#edit-is_private").prop("checked", false)
                 }
                 //append CSRF hidden input
                 document.getElementById("csrfHolder1").innerHTML = csrf.csrfField
             })
         })
 
+        //invoke change key modal
         $("button[name='change-password-button']").click(function (e) {
             var button = $(this)
             var itemID = button.attr("item-id")
 
             $.ajax({
-                url: `/user/edit-quiz?id=${itemID}`,
+                url: `/user/edit-quiz/${itemID}`,
                 method: "GET",
             }).then(res => {
                 const data = res.data.Data
                 const csrf = res.data.CSRF
-                document.getElementById("desc").innerHTML = `Change key on <b>${data.QuizName}</b>`
-                $("#key_quiz_form").attr("action", `/user/change-quiz-key?id=${itemID}`)
+                document.getElementById("desc").innerHTML = `Change key on <b>${data.Title}</b>`
+                $("#key_quiz_form").attr("action", `/user/change-quiz-key/${itemID}`)
 
                 //append CSRF hidden input
                 document.getElementById("csrfHolder2").innerHTML = csrf.csrfField
             })
         })
 
+        //invoke delete modal
         $("button[name='delete-button']").click(function (e) {
             var button = $(this)
             var itemID = button.attr("item-id")
-            $("#delete-form").attr("action", `/user/delete-quiz?id=${itemID}`)
+            $("#delete-form").attr("action", `/user/delete-quiz/${itemID}`)
 
             $.ajax({
-                url: `/user/edit-quiz?id=${itemID}`,
+                url: `/user/edit-quiz/${itemID}`,
                 method: "GET",
             }).then(res => {
                 const csrf = res.data.CSRF
@@ -264,15 +266,15 @@
             })
         })
 
-        //submiting
+        //sumbit quiz editing
         $("#edit_quiz_form").submit(function (e) {
             e.preventDefault()
             const form = $(this)
             const url = form.attr("action")
             const method = form.attr("method")
             const data = JSON.stringify({
-                name: $("#quizname").val(),
-                isPrivate: $("#is_private")[0].checked,
+                name: $("#edit-quizname").val(),
+                isPrivate: $("#edit-is_private")[0].checked,
             })
 
             $.ajax({
@@ -289,14 +291,17 @@
             })
         })
 
+        //submit changed private key
         $("#key_quiz_form").submit(function (e) {
             e.preventDefault()
             const form = $(this)
             const url = form.attr("action")
             const method = form.attr("method")
             const data = JSON.stringify({
-                PrivateKey: $("#private_key").val()
+                privateKey: $("#ch_private_key").val()
             })
+
+            console.log(data);
 
             $.ajax({
                 url,
@@ -308,10 +313,11 @@
                 }
             }).then(res => {
                 $("#change-password-modal").modal("hide")
-                window.location.reload()
+                // window.location.reload()
             })
         })
 
+        //submit deleted quiz
         $("#delete-form").submit(function (e) {
             e.preventDefault()
             const form = $(this)

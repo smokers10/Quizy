@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"quizy/database"
 	"quizy/libs"
 	"quizy/models"
 )
@@ -33,17 +32,16 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
-	gorm := database.Connect()
-	db, _ := gorm.DB()
-	defer db.Close()
+	db := libs.GORM()
+	body := libs.RDecoder(r)
 
-	gorm.Create(&models.User{
-		Name:     r.FormValue("name"),
-		Email:    r.FormValue("email"),
-		Password: libs.Hashing(r.FormValue("password")),
+	db.Create(&models.User{
+		Name:     body["name"].(string),
+		Email:    body["email"].(string),
+		Password: libs.Hashing(body["password"].(string)),
 	})
 
-	http.Redirect(w, r, "/login", 302)
+	libs.JSON(w, "Register success", nil, true)
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {

@@ -13,7 +13,7 @@
             <div class="card-body register-card-body">
                 <p class="login-box-msg">Register a new membership</p>
 
-                <form action="/register" method="POST">
+                <form action="/register" id="register-form" method="POST">
                     <div class="input-group mb-3">
                         <input type="text" name="name" class="form-control" placeholder="Full name">
                         <div class="input-group-append">
@@ -72,6 +72,34 @@
 
     <!-- /.login-box -->
     {{template "_script"}}
+    <script>
+        $("#register-form").submit(function(e){
+            e.preventDefault()
+            const form = $(this)
+            const url = form.attr("action")
+            const method = form.attr("method")
+            const data = JSON.stringify({
+                name : $("input[name='name']").val(),
+                email : $("input[name='email']").val(),
+                password : $("input[name='password']").val()
+            })
+
+            $.ajax({
+                url,
+                method,
+                data,
+                beforeSend: function(r){
+                    const csrf = $("input[name='gorilla.csrf.Token']").val()
+                    r.setRequestHeader("X-CSRF-Token", csrf)
+                }
+            }).then(res => {
+                const success = res.success
+                if(success){
+                    window.location.href = "/login"
+                }
+            })
+        })
+    </script>
 </body>
 
 </html>
