@@ -50,16 +50,14 @@
                                     <td>
                                         <center>
                                             {{if not .IsSubmited}}
-                                            <button class="btn btn-success">
+                                            <a href="/user/take-quiz/{{.Quiz.ID}}" class="btn btn-success">
                                                 Attempt Quiz
-                                            </button>
-                                            {{end}}
-
+                                            </a>
+                                            {{else}}
                                             <button class="btn btn-primary">
                                                 Quiz Result
                                             </button>
-
-
+                                            {{end}}
                                             <button class="btn btn-danger">
                                                 Un-Enroll
                                             </button>

@@ -42,8 +42,7 @@ func CreateQuizPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func EditQuiz(w http.ResponseWriter, r *http.Request) {
-	db := libs.GORM()
-	QuizID := mux.Vars(r)["id"]
+	db, QuizID := libs.GORM(), mux.Vars(r)["id"]
 	var quiz models.SelectedQuiz
 
 	db.Model(&models.Quiz{}).Where("id = ?", QuizID).Find(&quiz)
@@ -56,8 +55,7 @@ func EditQuiz(w http.ResponseWriter, r *http.Request) {
 
 //Action Handlers
 func CreateQuiz(w http.ResponseWriter, r *http.Request) {
-	db := libs.GORM()
-	body := libs.RDecoder(r)
+	db, body := libs.GORM(), libs.RDecoder(r)
 
 	db.Create(&models.Quiz{
 		Title:      body["title"].(string),
@@ -69,9 +67,7 @@ func CreateQuiz(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateQuiz(w http.ResponseWriter, r *http.Request) {
-	db := libs.GORM()
-	quizID := mux.Vars(r)["id"]
-	body := libs.RDecoder(r)
+	db, quizID, body := libs.GORM(), mux.Vars(r)["id"], libs.RDecoder(r)
 	var quiz models.Quiz
 
 	db.Model(quiz).Where("id = ? AND user_id = ?", quizID, libs.GetAuth(r).ID).Updates(models.Quiz{
@@ -82,9 +78,7 @@ func UpdateQuiz(w http.ResponseWriter, r *http.Request) {
 }
 
 func ChangeKey(w http.ResponseWriter, r *http.Request) {
-	db := libs.GORM()
-	body := libs.RDecoder(r)
-	quizID := mux.Vars(r)["id"]
+	db, body, quizID := libs.GORM(), libs.RDecoder(r), mux.Vars(r)["id"]
 	var quiz models.Quiz
 
 	if body["privateKey"].(string) != "" {
@@ -96,8 +90,7 @@ func ChangeKey(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteQuiz(w http.ResponseWriter, r *http.Request) {
-	db := libs.GORM()
-	var quizID = mux.Vars(r)["id"]
+	db, quizID := libs.GORM(), mux.Vars(r)["id"]
 	var quiz models.Quiz
 
 	db.Where("id = ? AND user_id = ?", quizID, libs.GetAuth(r).ID).Delete(&quiz)

@@ -7,8 +7,7 @@ import (
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	db := libs.GORM()
-	body := libs.RDecoder(r)
+	db, body := libs.GORM(), libs.RDecoder(r)
 	var user models.User
 	db.Where("email = ?", body["email"].(string)).First(&user)
 
@@ -32,8 +31,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
-	db := libs.GORM()
-	body := libs.RDecoder(r)
+	db, body := libs.GORM(), libs.RDecoder(r)
 
 	db.Create(&models.User{
 		Name:     body["name"].(string),

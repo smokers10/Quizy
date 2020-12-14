@@ -18,9 +18,7 @@ func CreateQuestionPage(w http.ResponseWriter, r *http.Request) {
 		"views/layout/_usernavigation.html",
 		"views/layout/_script.html",
 	))
-	db := libs.GORM()
-	quizID := r.URL.Query().Get("id")
-	userID := libs.GetAuth(r).ID
+	db, quizID, userID := libs.GORM(), r.URL.Query().Get("id"), libs.GetAuth(r).ID
 	var quiz models.Quiz
 	var question []models.SelectedQuestion
 
@@ -35,9 +33,7 @@ func CreateQuestionPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func EditQuestion(w http.ResponseWriter, r *http.Request) {
-	db := libs.GORM()
-	vars := mux.Vars(r)
-	id := vars["id"]
+	db, id := libs.GORM(), mux.Vars(r)["id"]
 	var question models.SelectedQuestion
 	db.Model(&models.Question{}).Where("id = ?", id).Find(&question)
 
@@ -47,10 +43,8 @@ func EditQuestion(w http.ResponseWriter, r *http.Request) {
 //Actions
 
 func CreateQuestion(w http.ResponseWriter, r *http.Request) {
-	db := libs.GORM()
-	quizID := r.URL.Query().Get("id")
+	db, quizID, body := libs.GORM(), r.URL.Query().Get("id"), libs.RDecoder(r)
 	conversedQuizID, _ := strconv.Atoi(quizID)
-	body := libs.RDecoder(r)
 	question := models.Question{
 		Question:    body["Question"].(string),
 		OptionA:     body["OptionA"].(string),
@@ -66,9 +60,7 @@ func CreateQuestion(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateQuestion(w http.ResponseWriter, r *http.Request) {
-	db := libs.GORM()
-	QuestionID := mux.Vars(r)["id"]
-	body := libs.RDecoder(r)
+	db, QuestionID, body := libs.GORM(), mux.Vars(r)["id"], libs.RDecoder(r)
 	var Question models.Question
 
 	db.Model(Question).Where("id = ?", QuestionID).Updates(models.Question{
@@ -83,8 +75,7 @@ func UpdateQuestion(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteQUestion(w http.ResponseWriter, r *http.Request) {
-	db := libs.GORM()
-	QuestionID := mux.Vars(r)["id"]
+	db, QuestionID := libs.GORM(), mux.Vars(r)["id"]
 	var Question models.Question
 
 	db.Where("id = ?", QuestionID).Delete(&Question)

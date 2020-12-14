@@ -25,9 +25,8 @@ func MyEnrollment(w http.ResponseWriter, r *http.Request) {
 }
 
 func EnrollQuiz(w http.ResponseWriter, r *http.Request) {
-	db := libs.GORM()
+	db, userID := libs.GORM(), libs.GetAuth(r).ID
 	quizID, _ := strconv.Atoi(mux.Vars(r)["id"])
-	userID := libs.GetAuth(r).ID
 	var quiz models.SelectedQuizEnrollment
 
 	db.Model(&models.Quiz{}).Where("id = ?", quizID, userID).First(&quiz)
@@ -46,15 +45,13 @@ func EnrollQuiz(w http.ResponseWriter, r *http.Request) {
 	}
 	db.Create(&enrollment)
 
-	libs.JSON(w, "Successfully Enrolled", nil, true)
+	libs.JSON(w, "Successfully Enrolled", quiz.ID, true)
 	return
 }
 
 func EnrollPrivateQuiz(w http.ResponseWriter, r *http.Request) {
-	db := libs.GORM()
+	db, userID, body := libs.GORM(), libs.GetAuth(r).ID, libs.RDecoder(r)
 	quizID, _ := strconv.Atoi(mux.Vars(r)["id"])
-	userID := libs.GetAuth(r).ID
-	body := libs.RDecoder(r)
 	var quiz models.SelectedQuizEnrollment
 
 	db.Model(&models.Quiz{}).Where("id = ?", quizID, userID).First(&quiz)
@@ -77,6 +74,13 @@ func EnrollPrivateQuiz(w http.ResponseWriter, r *http.Request) {
 	}
 	db.Create(&enrollment)
 
-	libs.JSON(w, "Successfully enrolled", nil, true)
+	libs.JSON(w, "Successfully enrolled", quiz.ID, true)
 	return
+}
+
+func Unenrollment(w http.ResponseWriter, r *http.Request) {
+	db, enrollmentID, userID := libs.GORM(), mux.Vars(r)["id"], libs.GetAuth(r).ID
+	var Enrollment models.Enrollment
+
+	db.Where("id = ? AND user_id", enrollmentID, userID).Delete(&Enrollment)
 }

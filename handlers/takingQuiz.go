@@ -16,8 +16,7 @@ func TakeQuiz(w http.ResponseWriter, r *http.Request) {
 		"views/layout/_head.html",
 		"views/layout/_script.html",
 	))
-	db := libs.GORM()
-	quizID := mux.Vars(r)["id"]
+	db, quizID := libs.GORM(), mux.Vars(r)["id"]
 	var Quiz models.SelectedQuiz
 	var Questions []models.SelectedQuestionOnTake
 
@@ -28,8 +27,4 @@ func TakeQuiz(w http.ResponseWriter, r *http.Request) {
 		"Quiz":     Quiz,
 		"Question": Questions,
 	})
-}
-
-func SubmitAnswer(w http.ResponseWriter, r *http.Request) {
-
 }

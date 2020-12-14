@@ -133,6 +133,8 @@
                     setTimeout(() => {
                         document.getElementById("response-text").textContent = ""
                     }, 3000)
+                }else{
+                    window.location.href = `/user/take-quiz/${res.data}`
                 }
             })
         })
