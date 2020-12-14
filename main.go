@@ -31,5 +31,6 @@ func Migrate() {
 		&models.Quiz{},
 		&models.Question{},
 		&models.Answer{},
+		&models.Enrollment{},
 	)
 }

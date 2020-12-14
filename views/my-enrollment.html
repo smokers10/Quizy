@@ -1,0 +1,81 @@
+{{define "my-enrollment"}}
+<!DOCTYPE html>
+<html lang="en">
+{{template "_head"}}
+
+<body class="hold-transition layout-top-nav">
+    <div class="wrapper">
+        {{template "user_navigation"}}
+        
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1 class="m-0 text-dark">List Quiz</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="container">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">my quiz ist</h3>
+                        </div>
+                        <table id="table1" class="table  table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Quiz Title</th>
+                                    <th>Enrolled At</th>
+                                    <th>Submisson Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {{range $i,$a := .}}
+                                <tr>
+                                    <td>{{.Quiz.Title}}</td>
+                                    <td>{{.CreatedAt}}</td>
+                                    <td>
+                                        {{if .IsSubmited}}
+                                        Finished
+                                        {{else}}
+                                        Not Finished
+                                        {{end}}
+                                    </td>
+                                    
+                                    <td>
+                                        <center>
+                                            {{if not .IsSubmited}}
+                                            <button class="btn btn-success">
+                                                Attempt Quiz
+                                            </button>
+                                            {{end}}
+
+                                            <button class="btn btn-primary">
+                                                Quiz Result
+                                            </button>
+
+
+                                            <button class="btn btn-danger">
+                                                Un-Enroll
+                                            </button>
+                                        </center>
+                                    </td>
+                                </tr>
+                                {{end}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{template "_script"}}
+</body>
+
+</html>
+{{end}}

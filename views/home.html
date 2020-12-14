@@ -7,100 +7,136 @@
     <div class="wrapper">
         {{template "user_navigation"}}
 
-        <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-            <!-- Content Header (Page header) -->
             <div class="content-header">
                 <div class="container">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1 class="m-0 text-dark"> Top Navigation <small>Example 3.0</small></h1>
-                        </div><!-- /.col -->
-                        <div class="col-sm-6">
-                            <ol class="breadcrumb float-sm-right">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item"><a href="#">Layout</a></li>
-                                <li class="breadcrumb-item active">Top Navigation</li>
-                            </ol>
-                        </div><!-- /.col -->
-                    </div><!-- /.row -->
-                </div><!-- /.container-fluid -->
+                            <h1 class="m-0 text-dark">Available Quizzes For You</h1>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- /.content-header -->
-
-            <!-- Main content -->
             <div class="content">
                 <div class="container">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Card title</h5>
+                    {{range .Quiz}}
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title">
+                                {{.Title}}
+                            </h3>
 
-                                    <p class="card-text">
-                                        Some quick example text to build on the card title and make up the bulk of the
-                                        card's
-                                        content.
-                                    </p>
+                            <p class="card-text">
+                                Created by <b>{{.User.Name}}</b> on {{.CreatedAt}}
+                                {{if .IsPrivate}}
+                                you need to know private key to enroll
+                                {{end}}
+                            </p>
 
-                                    <a href="#" class="card-link">Card link</a>
-                                    <a href="#" class="card-link">Another link</a>
-                                </div>
-                            </div>
-
-                            <div class="card card-primary card-outline">
-                                <div class="card-body">
-                                    <h5 class="card-title">Card title</h5>
-
-                                    <p class="card-text">
-                                        Some quick example text to build on the card title and make up the bulk of the
-                                        card's
-                                        content.
-                                    </p>
-                                    <a href="#" class="card-link">Card link</a>
-                                    <a href="#" class="card-link">Another link</a>
-                                </div>
-                            </div><!-- /.card -->
+                            <a href="#" class="card-link" data-id="{{.ID}}" data-isprivate="{{.IsPrivate}}">Enroll this
+                                quiz</a>
                         </div>
-                        <!-- /.col-md-6 -->
-                        <div class="col-lg-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="card-title m-0">Featured</h5>
-                                </div>
-                                <div class="card-body">
-                                    <h6 class="card-title">Special title treatment</h6>
-
-                                    <p class="card-text">With supporting text below as a natural lead-in to additional
-                                        content.</p>
-                                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                                </div>
-                            </div>
-
-                            <div class="card card-primary card-outline">
-                                <div class="card-header">
-                                    <h5 class="card-title m-0">Featured</h5>
-                                </div>
-                                <div class="card-body">
-                                    <h6 class="card-title">Special title treatment</h6>
-
-                                    <p class="card-text">With supporting text below as a natural lead-in to additional
-                                        content.</p>
-                                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- /.col-md-6 -->
                     </div>
-                    <!-- /.row -->
-                </div><!-- /.container-fluid -->
+                    {{end}}
+                </div>
             </div>
-            <!-- /.content -->
         </div>
-        <!-- /.content-wrapper -->
-        
     </div>
+
+    <div class="modal fade" id="enrollment-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Quiz enrollment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                
+                <form id="enrollment-form" action="" method="POST">
+                    <div class="modal-body" id="public-enrollment">
+                        <p>
+                            Do you realy wanna enroll this quiz?
+                        </p>
+                    </div>
+
+                    <div class="modal-body" id="private-enrollment">
+                        <div class="form-group">
+                            <p>
+                                this quiz is private, please enter keey to enroll this quiz.
+                            </p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="privatekey">Private Key</label>
+                            <input type="password" class="form-control" name="privatekey" id="privatekey" placeholder="Enter private key">
+                        </div>
+
+                        <div class="form-group" id="response-text">
+
+                        </div>
+                    </div>
+
+                    {{.CSRF.csrfField}}
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Enroll this quiz</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     {{template "_script"}}
+    <script>
+        $(".card-link").click(function (e) {
+            const button = $(this)
+            const id = button.attr("data-id")
+            const isPrivate = button.attr("data-isprivate")
+
+            if(isPrivate == "true") { 
+                $("#enrollment-form").attr("action", `/user/private-enrollment/${id}`)
+                $("#public-enrollment").hide()
+                $("#private-enrollment").show()
+            } else  {
+                $("#enrollment-form").attr("action",`/user/enrollment/${id}`)
+                $("#public-enrollment").show()
+                $("#private-enrollment").hide()
+            }
+
+            $("#enrollment-modal").modal("show")
+        })
+
+        $("#enrollment-form").submit(function(e){
+            e.preventDefault()
+            const form = $(this)
+            const url = form.attr("action")
+            const method = form.attr("method")
+            const data = JSON.stringify({
+                privatekey : $("input#privatekey").val()
+            })
+
+            $.ajax({
+                url,
+                method,
+                data,
+                beforeSend: function(r){
+                    const csrf = form.find("input[name='gorilla.csrf.Token']").val()
+                    r.setRequestHeader("X-CSRF-Token", csrf)
+                }
+            }).then(res=>{
+                const success = res.success
+                const msg = res.message
+                if (!success)  {
+                    document.getElementById("response-text").textContent = msg
+                    setTimeout(() => {
+                        document.getElementById("response-text").textContent = ""
+                    }, 3000)
+                }
+            })
+        })
+    </script>
 </body>
 
 </html>

@@ -3,7 +3,6 @@ package routes
 import (
 	"net/http"
 	"quizy/handlers"
-	"quizy/libs"
 
 	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
@@ -11,7 +10,6 @@ import (
 
 func Router() *mux.Router {
 	r := mux.NewRouter()
-
 	//use middleware
 	CSRF := csrf.Protect([]byte("handsomedog"), csrf.Secure(false))
 	r.Use(CSRF)
@@ -21,20 +19,17 @@ func Router() *mux.Router {
 	prefix := http.StripPrefix("/assets/", http.FileServer(file))
 	r.PathPrefix("/assets/").Handler(prefix)
 
+	//Landing and auth pages routes
 	r.HandleFunc("/", handlers.IndexPage).Methods("GET")
 	r.HandleFunc("/login", Guest(handlers.LoginPage)).Methods("GET")
 	r.HandleFunc("/register", Guest(handlers.RegisterPage)).Methods("GET")
-	r.HandleFunc("/generate-csrf", func(w http.ResponseWriter, r *http.Request) {
-		csrf := libs.CSRFToken(r)
-		libs.JSON(w, "this is your csrf", csrf, true)
-	})
 
 	//auth action
 	r.HandleFunc("/register", Guest(handlers.Register)).Methods("POST")
 	r.HandleFunc("/login", Guest(handlers.Login)).Methods("POST")
 	r.HandleFunc("/logout", Private(handlers.Logout)).Methods("GET")
 
-	//user routes
+	//user home
 	r.HandleFunc("/user/home", Private(handlers.Home)).Methods("GET")
 
 	//quiz render page
@@ -56,6 +51,17 @@ func Router() *mux.Router {
 	r.HandleFunc("/user/create-question", Private(handlers.CreateQuestion)).Methods("POST")
 	r.HandleFunc("/user/update-question/{id}", Private(handlers.UpdateQuestion)).Methods("POST")
 	r.HandleFunc("/user/delete-question/{id}", Private(handlers.DeleteQUestion)).Methods("POST")
+
+	//Enrollment render page
+	r.HandleFunc("/user/my-enrollment", Private(handlers.MyEnrollment)).Methods("GET")
+
+	//Enrollment Action
+	r.HandleFunc("/user/enrollment/{id}", Private(handlers.EnrollQuiz)).Methods("POST")
+	r.HandleFunc("/user/private-enrollment/{id}", Private(handlers.EnrollPrivateQuiz)).Methods("POST")
+
+	//Taking quiz
+	r.HandleFunc("/user/take-quiz/{id}", Private(MustEnroll(handlers.TakeQuiz))).Methods("GET")
+	r.HandleFunc("/user/submit-answer", Private(handlers.SubmitAnswer)).Methods("POST")
 
 	return r
 }

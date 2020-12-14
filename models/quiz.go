@@ -1,6 +1,8 @@
 package models
 
 import (
+	"quizy/libs"
+
 	"gorm.io/gorm"
 )
 
@@ -19,4 +21,19 @@ type SelectedQuiz struct {
 	Title       string
 	IsPublished bool
 	IsPrivate   bool
+}
+
+type SelectedQuizEnrollment struct {
+	ID          uint
+	Title       string
+	IsPublished bool
+	IsPrivate   bool
+	PrivateKey  string
+}
+
+func (q *Quiz) BeforeCreate(tx *gorm.DB) (err error) {
+	if q.PrivateKey != "" {
+		q.PrivateKey = libs.Hashing(q.PrivateKey)
+	}
+	return
 }

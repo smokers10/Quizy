@@ -25,3 +25,12 @@ type SelectedQuestion struct {
 	OptionD     string
 	RightAnswer string
 }
+
+type SelectedQuestionOnTake struct {
+	ID       uint
+	Question string
+	OptionA  string
+	OptionB  string
+	OptionC  string
+	OptionD  string
+}

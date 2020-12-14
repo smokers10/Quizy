@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
 	"quizy/libs"
+	"quizy/models"
 )
 
 func Home(w http.ResponseWriter, r *http.Request) {
@@ -14,8 +14,11 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		"views/layout/_head.html",
 		"views/layout/_script.html",
 	))
-
-	fmt.Println(libs.GetAuth(r))
-
-	t.ExecuteTemplate(w, "user_home", nil)
+	db := libs.GORM()
+	var quiz []models.Quiz
+	db.Joins("User").Where("user_id != ?", libs.GetAuth(r).ID).Find(&quiz).Limit(10)
+	t.ExecuteTemplate(w, "user_home", libs.M{
+		"Quiz": quiz,
+		"CSRF": libs.CSRFToken(r),
+	})
 }

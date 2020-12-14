@@ -59,18 +59,12 @@ func CreateQuiz(w http.ResponseWriter, r *http.Request) {
 	db := libs.GORM()
 	body := libs.RDecoder(r)
 
-	if body["privateKey"].(string) != "" {
-		body["privateKey"] = libs.Hashing(body["privateKey"].(string))
-	}
-
-	quiz := models.Quiz{
+	db.Create(&models.Quiz{
 		Title:      body["title"].(string),
 		UserID:     libs.GetAuth(r).ID,
 		IsPrivate:  body["isPrivate"].(bool),
 		PrivateKey: body["privateKey"].(string),
-	}
-
-	db.Create(&quiz)
+	})
 	libs.JSON(w, "Created new quiz", body, true)
 }
 

@@ -287,7 +287,10 @@
                     r.setRequestHeader("X-CSRF-Token", csrf)
                 }
             }).then(res => {
-                console.log(res)
+                const success = res.success
+                if(success){
+                    window.location.reload()
+                }
             })
         })
         
@@ -314,7 +317,10 @@
                     r.setRequestHeader("X-CSRF-Token", csrf)
                 }
             }).then(res => {
-                console.log(res)
+                const success = res.success
+                if(success){
+                    window.location.reload()
+                }
             })
         })
     
@@ -332,7 +338,10 @@
                     r.setRequestHeader("X-CSRF-Token", csrf)
                 }
             }).then(res => {
-                console.log(res)
+                const success = res.success
+                if(success){
+                    window.location.reload()
+                }
             })
         })
     </script>

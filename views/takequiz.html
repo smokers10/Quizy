@@ -1,0 +1,52 @@
+{{define "taking_quiz"}}
+    <html lang="en">
+        {{template "_head"}}
+
+        <body class="hold-transition layout-top-nav">
+            <div class="wrapper">
+                {{template "user_navigation"}}
+        
+                <div class="content-wrapper">
+                    <div class="content-header">
+                        <div class="container">
+                            <div class="row mb-2">
+                                <div class="col-sm-6">
+                                    <h1 class="m-0 text-dark">{{.Quiz.Title}}</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="content">
+                        <div class="container">
+                            {{range .Question}}
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="card-text">
+                                        {{.Question}}
+                                    </p>
+        
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            A. {{.OptionA}}
+                                        </div>
+                                        <div class="col-md-6">
+                                            C. {{.OptionC}}
+                                        </div>
+                                        <div class="col-md-6">
+                                            B. {{.OptionB}}
+                                        </div>
+                                        <div class="col-md-6">
+                                            D. {{.OptionD}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{end}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </body>
+    </html>
+{{end}}

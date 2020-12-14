@@ -38,7 +38,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	db.Create(&models.User{
 		Name:     body["name"].(string),
 		Email:    body["email"].(string),
-		Password: libs.Hashing(body["password"].(string)),
+		Password: body["password"].(string),
 	})
 
 	libs.JSON(w, "Register success", nil, true)
