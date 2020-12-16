@@ -21,7 +21,10 @@ func MyEnrollment(w http.ResponseWriter, r *http.Request) {
 	var enrollments []models.Enrollment
 	db.Joins("Quiz").Where("enrollments.user_id = ?", libs.GetAuth(r).ID).Find(&enrollments)
 
-	t.ExecuteTemplate(w, "my-enrollment", enrollments)
+	t.ExecuteTemplate(w, "my-enrollment", libs.M{
+		"Enrollment": enrollments,
+		"CSRF":       libs.CSRFToken(r),
+	})
 }
 
 func EnrollQuiz(w http.ResponseWriter, r *http.Request) {
@@ -83,4 +86,5 @@ func Unenrollment(w http.ResponseWriter, r *http.Request) {
 	var Enrollment models.Enrollment
 
 	db.Where("id = ? AND user_id", enrollmentID, userID).Delete(&Enrollment)
+	libs.JSON(w, "unenrollment success", nil, true)
 }

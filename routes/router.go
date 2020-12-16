@@ -58,10 +58,11 @@ func Router() *mux.Router {
 	//Enrollment Action
 	r.HandleFunc("/user/enrollment/{id}", Private(handlers.EnrollQuiz)).Methods("POST")
 	r.HandleFunc("/user/private-enrollment/{id}", Private(handlers.EnrollPrivateQuiz)).Methods("POST")
+	r.HandleFunc("/user/unenrollment/{id}", Private(handlers.Unenrollment)).Methods("POST")
 
 	//Taking quiz
 	r.HandleFunc("/user/take-quiz/{id}", Private(MustEnroll(handlers.TakeQuiz))).Methods("GET")
-	r.HandleFunc("/user/submit-answer", Private(handlers.SubmitAnswer)).Methods("POST")
+	r.HandleFunc("/user/submit-answer/{id}", Private(MustEnroll(handlers.SubmitAnswer))).Methods("POST")
 
 	return r
 }

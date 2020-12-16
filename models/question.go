@@ -34,3 +34,8 @@ type SelectedQuestionOnTake struct {
 	OptionC  string
 	OptionD  string
 }
+
+type SelectedQuestionOnCheck struct {
+	ID          uint
+	RightAnswer string
+}

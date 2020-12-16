@@ -18,7 +18,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	var quiz []models.Quiz
 	var enrolledQuiz []string
 	//get enrolled quiz
-	db.Raw("SELECT quiz_id FROM enrollments WHERE user_id = ?", libs.GetAuth(r).ID).Scan(&enrolledQuiz)
+	db.Raw("SELECT quiz_id FROM enrollments WHERE user_id = ? AND deleted_at = null", libs.GetAuth(r).ID).Scan(&enrolledQuiz)
 
 	if len(enrolledQuiz) != 0 {
 		db.Joins("User").Where("user_id != ? AND quizzes.id NOT IN ?", libs.GetAuth(r).ID, enrolledQuiz).Find(&quiz).Limit(10)

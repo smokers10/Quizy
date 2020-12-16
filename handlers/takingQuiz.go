@@ -26,5 +26,6 @@ func TakeQuiz(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "taking_quiz", libs.M{
 		"Quiz":     Quiz,
 		"Question": Questions,
+		"CSRF":     libs.CSRFToken(r),
 	})
 }

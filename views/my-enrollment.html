@@ -35,7 +35,7 @@
                             </thead>
 
                             <tbody>
-                                {{range $i,$a := .}}
+                                {{range $i,$a := .Enrollment}}
                                 <tr>
                                     <td>{{.Quiz.Title}}</td>
                                     <td>{{.CreatedAt}}</td>
@@ -58,7 +58,9 @@
                                                 Quiz Result
                                             </button>
                                             {{end}}
-                                            <button class="btn btn-danger">
+
+                                            <button class="btn btn-danger" name="unenroll-button" data-toggle="modal"
+                                            data-target="#unenroll-modal" quiz-id="{{.ID}}">
                                                 Un-Enroll
                                             </button>
                                         </center>
@@ -72,7 +74,63 @@
             </div>
         </div>
     </div>
+
+    <!-- Unenroll modal -->
+    <div class="modal fade" id="unenroll-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Unenroll quiz</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form role="form" id="unenroll_form" action="" method="POST">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            Do you really wanna un-enroll this quiz?
+                        </div>
+                        {{ .CSRF.csrfField }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Un-enroll</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- End unenroll modal -->
+
     {{template "_script"}}
+    <script>
+        $("button[name='unenroll-button']").click(function(e){
+            const button = $(this)
+            const enrollmentID = button.attr("quiz-id")
+            $("#unenroll_form").attr("action",`/user/unenrollment/${enrollmentID}`)
+        })
+
+        $("#unenroll_form").submit(function(e){
+            e.preventDefault()
+            const form = $(this)
+            const url = form.attr("action")
+            const method = form.attr("method")
+
+            $.ajax({
+                url,
+                method,
+                beforeSend: function(r){
+                    const csrf = form.find("input[name='gorilla.csrf.Token']").val()
+                    r.setRequestHeader("X-CSRF-Token",csrf)
+                }
+            }).then(res=>{
+                if(res.success){
+                    window.location.reload()
+                }
+            })
+        })
+    </script>
 </body>
 
 </html>

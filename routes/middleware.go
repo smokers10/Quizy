@@ -54,6 +54,9 @@ func MustEnroll(handler http.HandlerFunc) http.HandlerFunc {
 		if enrollment.ID == 0 {
 			http.Redirect(w, r, "/user/home", 302)
 		}
+		if enrollment.IsSubmited == true {
+			http.Redirect(w, r, "/user/my-enrollment", 302)
+		}
 		handler.ServeHTTP(w, r)
 	}
 }

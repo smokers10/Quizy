@@ -1,52 +1,98 @@
 {{define "taking_quiz"}}
-    <html lang="en">
-        {{template "_head"}}
+<html lang="en">
+{{template "_head"}}
 
-        <body class="hold-transition layout-top-nav">
-            <div class="wrapper">
-                {{template "user_navigation"}}
-        
-                <div class="content-wrapper">
-                    <div class="content-header">
-                        <div class="container">
-                            <div class="row mb-2">
-                                <div class="col-sm-6">
-                                    <h1 class="m-0 text-dark">{{.Quiz.Title}}</h1>
-                                </div>
-                            </div>
+<body class="hold-transition layout-top-nav">
+    <div class="wrapper">
+        {{template "user_navigation"}}
+
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1 class="m-0 text-dark">
+                                {{.Quiz.Title}}
+                            </h1>
                         </div>
-                    </div>
-                    
-                    <div class="content">
-                        <div class="container">
-                            {{range .Question}}
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="card-text">
-                                        {{.Question}}
-                                    </p>
-        
-                                    <div class="row mb-4">
-                                        <div class="col-md-6">
-                                            A. {{.OptionA}}
-                                        </div>
-                                        <div class="col-md-6">
-                                            C. {{.OptionC}}
-                                        </div>
-                                        <div class="col-md-6">
-                                            B. {{.OptionB}}
-                                        </div>
-                                        <div class="col-md-6">
-                                            D. {{.OptionD}}
-                                        </div>
-                                    </div>
-                                </div>
+
+                        <div class="col-sm-6">
+                            <div class="d-flex justify-content-end">
+                                <button class="btn btn-primary" id="submit-answer">
+                                    Submit Answer
+                                </button>
                             </div>
-                            {{end}}
                         </div>
                     </div>
                 </div>
             </div>
-        </body>
-    </html>
+
+            <div class="content">
+                <div class="container">
+                    <form id="answer-form" action="/user/submit-answer/{{.Quiz.ID}}" method="POST">
+                        {{.CSRF.csrfField}}
+                        {{range .Question}}
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="card-text">
+                                    {{.Question}}
+                                </p>
+    
+                                <div class="row mb-4">
+                                    <input type="radio" name="{{.ID}}" id="{{.ID}}" value="unanswered" checked hidden>
+
+                                    <div class="col-md-6">
+                                        <input type="radio" name="{{.ID}}" id="{{.ID}}" value="A">
+                                        A. {{.OptionA}}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="radio" name="{{.ID}}" id="{{.ID}}" value="C">
+                                        C. {{.OptionC}}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="radio" name="{{.ID}}" id="{{.ID}}" value="B">
+                                        B. {{.OptionB}}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="radio" name="{{.ID}}" id="{{.ID}}" value="D">
+                                        D. {{.OptionD}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{end}}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{template "_script"}}
+    <script>
+        $("#submit-answer").click(function(){
+            $("#answer-form").submit()
+        })
+
+        $("#answer-form").submit(function(e){
+            e.preventDefault()
+            const form = $(this)
+            const url = form.attr("action")
+            const method = form.attr("method")
+            const data = JSON.stringify(form.serializeArray())
+            
+            $.ajax({
+                url,
+                method,
+                data,
+                beforeSend: function(r){
+                    const csrf = form.find("input[name='gorilla.csrf.Token']").val()
+                    r.setRequestHeader("X-CSRF-Token", csrf)
+                }
+            }).then(res=>{
+                console.log(res)
+            })
+        })
+    </script>
+</body>
+
+</html>
 {{end}}

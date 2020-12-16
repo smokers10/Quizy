@@ -103,3 +103,13 @@ func RDecoder(r *http.Request) map[string]interface{} {
 
 	return body.(map[string]interface{})
 }
+
+//to decode body array
+func ArrayRDecoder(r *http.Request) []interface{} {
+	type EmptyInterface interface{}
+	var body EmptyInterface
+	decoder := json.NewDecoder(r.Body)
+	decoder.Decode(&body)
+
+	return body.([]interface{})
+}
