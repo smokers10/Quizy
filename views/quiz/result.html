@@ -1,0 +1,75 @@
+{{define "quiz_result"}}
+<html lang="en">
+{{template "_head"}}
+
+<body class="hold-transition layout-top-nav">
+    <div class="wrapper">
+        {{template "user_navigation"}}
+
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1 class="m-0 text-dark">
+                                title
+                            </h1>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="d-flex justify-content-end">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="container">
+                    {{range .}}
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-text">
+                                {{.Question.Question}}
+                            </p>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    A. {{.Question.OptionA}}
+                                </div>
+
+                                <div class="col-md-6">
+                                    C. {{.Question.OptionC}}
+                                </div>
+
+                                <div class="col-md-6">
+                                    B. {{.Question.OptionB}}
+                                </div>
+
+                                <div class="col-md-6">
+                                    D. {{.Question.OptionD}}
+                                </div>
+                            </div>
+
+                            {{if .IsRight}}
+                            <p>
+                                Your answer is <b>{{.Answer}}</b> that correct!
+                            </p>
+                            {{else}}
+                            <p>
+                                Your answer is <b>{{.Answer}}</b> that wrong asnwer! it should be <b>{{.Question.RightAnswer}}</b>
+                            </p>
+                            {{end}}
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{template "_script"}}
+</body>
+
+</html>
+{{end}}

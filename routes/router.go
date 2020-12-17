@@ -64,5 +64,8 @@ func Router() *mux.Router {
 	r.HandleFunc("/user/take-quiz/{id}", Private(MustEnroll(handlers.TakeQuiz))).Methods("GET")
 	r.HandleFunc("/user/submit-answer/{id}", Private(MustEnroll(handlers.SubmitAnswer))).Methods("POST")
 
+	//Quiz Result
+	r.HandleFunc("/user/quiz-result/{id}", Private(handlers.CalculateQuizresult)).Methods("GET")
+
 	return r
 }
